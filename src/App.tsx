@@ -241,28 +241,24 @@ function App() {
   const weekWorkouts = getCurrentWeekWorkouts()
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-black via-gray-900 to-red-900 text-white">
-      {/* Header with logo */}
-      <div className="bg-black/50 backdrop-blur-sm border-b border-red-900 sticky top-0 z-10">
-        <div className="max-w-md mx-auto px-4 py-3">
-          <div className="flex items-center justify-center">
-            <img 
-              src="/locked-in-logo.png" 
-              alt="Locked In" 
-              className="h-12 w-auto"
-              onError={(e) => {
-                const target = e.target as HTMLImageElement
-                target.style.display = 'none'
-                const fallback = document.createElement('div')
-                fallback.innerHTML = '<span class="text-2xl font-bold text-red-400">LOCKED IN</span>'
-                target.parentNode?.appendChild(fallback)
-              }}
-            />
-          </div>
-        </div>
-      </div>
-
+    <div className="min-h-screen bg-gradient-to-br from-black to-red-900 text-white">
       <main className="max-w-md mx-auto px-4 py-6 pb-24">
+        {/* Centered Logo */}
+        <div className="flex items-center justify-center mb-6">
+          <img 
+            src="/locked-in-logo.png" 
+            alt="Locked In" 
+            className="h-32 w-auto"
+            onError={(e) => {
+              const target = e.target as HTMLImageElement
+              target.style.display = 'none'
+              const fallback = document.createElement('div')
+              fallback.innerHTML = '<span class="text-5xl font-bold text-red-400">LOCKED IN</span>'
+              target.parentNode?.appendChild(fallback)
+            }}
+          />
+        </div>
+
         {currentView === 'home' && (
           <div className="space-y-6">
             {/* Progress Stats */}
@@ -303,10 +299,10 @@ function App() {
                 </div>
                 <div className="mt-4 flex space-x-2">
                   <button 
-                    onClick={startPlannedWorkout}
+                    onClick={() => setCurrentView('plan-workout')}
                     className="flex-1 bg-green-600 hover:bg-green-700 text-white font-medium py-3 rounded-lg transition-colors"
                   >
-                    Start Workout
+                    Plan Workout
                   </button>
                   <button 
                     onClick={() => setCurrentView('plan-workout')}
@@ -522,10 +518,10 @@ function App() {
 
                 <div className="mt-4 space-y-2">
                   <button 
-                    onClick={startPlannedWorkout}
+                    onClick={() => setCurrentView('plan-workout')}
                     className="w-full bg-gradient-to-r from-green-700 to-green-600 hover:from-green-600 hover:to-green-500 text-white font-medium py-3 rounded-lg transition-all duration-300 shadow-lg hover:shadow-green-700/50"
                   >
-                    Start This Workout
+                    Edit Plan
                   </button>
                   <button 
                     onClick={() => setPlannedWorkout([])}
@@ -564,6 +560,24 @@ function App() {
                 ✕
               </button>
             </div>
+
+            {/* Start Planned Workout Option */}
+            {plannedWorkout.length > 0 && !isWorkoutStarted && (
+              <div className="bg-gradient-to-r from-blue-900/80 to-blue-700/80 backdrop-blur-sm rounded-xl p-4 border border-blue-700/30">
+                <div className="flex items-center justify-between">
+                  <div>
+                    <h3 className="font-medium text-blue-300">Planned Workout Ready</h3>
+                    <p className="text-sm text-blue-200">{plannedWorkout.length} exercises planned</p>
+                  </div>
+                  <button 
+                    onClick={startPlannedWorkout}
+                    className="bg-blue-600 hover:bg-blue-700 text-white font-medium py-2 px-4 rounded-lg transition-colors"
+                  >
+                    Start Plan
+                  </button>
+                </div>
+              </div>
+            )}
 
             {/* Workout Type Selector */}
             <div className="bg-gradient-to-r from-gray-900/80 to-red-900/80 backdrop-blur-sm rounded-xl p-6 border border-red-900/30">
@@ -1088,7 +1102,7 @@ function App() {
                 currentView === 'plan-workout' ? 'text-red-400' : 'text-white hover:text-red-300'
               }`}
             >
-              <span className="text-lg">📋</span>
+              <span className="text-lg">✎</span>
               <span className="text-xs mt-1">Plan</span>
             </button>
             
