@@ -134,15 +134,44 @@ const CARDIO_EXERCISES = [
 ]
 
 function App() {
-  const [currentView, setCurrentView] = useState<'home' | 'weight-training' | 'cardio' | 'history'>('home')
+  const [currentView, setCurrentView] = useState<'home' | 'weight-training' | 'cardio' | 'history' | 'plan-workout'>('home')
   const [workouts, setWorkouts] = useState<Workout[]>([])
   const [currentExercise, setCurrentExercise] = useState('')
   const [currentSets, setCurrentSets] = useState<{weight: string, reps: string}[]>([])
   const [sessionExercises, setSessionExercises] = useState<{name: string, sets: {weight: string, reps: string}[]}[]>([])
+  const [plannedWorkout, setPlannedWorkout] = useState<{name: string, sets: number}[]>([])
+  const [isWorkoutStarted, setIsWorkoutStarted] = useState(false)
+
+  const startPlannedWorkout = () => {
+    if (plannedWorkout.length === 0) {
+      alert('Please add exercises to your plan first.')
+      return
+    }
+    
+    // Convert planned workout to session exercises with empty sets
+    const plannedExercises = plannedWorkout.map(exercise => ({
+      name: exercise.name,
+      sets: Array(exercise.sets).fill(null).map(() => ({ weight: '', reps: '' }))
+    }))
+    
+    setSessionExercises(plannedExercises)
+    setIsWorkoutStarted(true)
+    setCurrentView('weight-training')
+  }
 
   const saveWorkout = () => {
     if (sessionExercises.length === 0) {
       alert('Please add at least one exercise before saving.')
+      return
+    }
+
+    // Check if all sets have weight and reps filled
+    const incompleteSets = sessionExercises.some(exercise => 
+      exercise.sets.some(set => !set.weight || !set.reps)
+    )
+    
+    if (incompleteSets) {
+      alert('Please fill in weight and reps for all sets before saving.')
       return
     }
 
@@ -160,6 +189,10 @@ function App() {
     setSessionExercises([])
     setCurrentExercise('')
     setCurrentSets([])
+    setIsWorkoutStarted(false)
+    if (isWorkoutStarted) {
+      setPlannedWorkout([]) // Clear the plan after completing it
+    }
     alert('Workout saved successfully!')
   }
 
@@ -226,8 +259,44 @@ function App() {
               </div>
             </div>
 
+            {/* Planned Workout Section */}
+            {plannedWorkout.length > 0 && (
+              <div className="bg-gradient-to-r from-blue-900/80 to-purple-900/80 backdrop-blur-sm rounded-xl p-6 border border-blue-900/30">
+                <h3 className="text-lg font-semibold mb-4 text-white">Today's Planned Workout</h3>
+                <div className="space-y-2">
+                  {plannedWorkout.map((exercise, index) => (
+                    <div key={index} className="flex justify-between items-center">
+                      <span className="text-blue-200">{exercise.name}</span>
+                      <span className="text-sm text-blue-300">{exercise.sets} sets</span>
+                    </div>
+                  ))}
+                </div>
+                <div className="mt-4 flex space-x-2">
+                  <button 
+                    onClick={startPlannedWorkout}
+                    className="flex-1 bg-green-600 hover:bg-green-700 text-white font-medium py-3 rounded-lg transition-colors"
+                  >
+                    Start Workout
+                  </button>
+                  <button 
+                    onClick={() => setCurrentView('plan-workout')}
+                    className="px-4 bg-blue-600 hover:bg-blue-700 text-white font-medium py-3 rounded-lg transition-colors"
+                  >
+                    Edit Plan
+                  </button>
+                </div>
+              </div>
+            )}
+
             {/* Action Buttons */}
             <div className="space-y-4">
+              <button 
+                onClick={() => setCurrentView('plan-workout')}
+                className="w-full bg-gradient-to-r from-blue-900 to-blue-700 hover:from-blue-800 hover:to-blue-600 text-white font-medium py-4 px-6 rounded-lg transition-all duration-300 shadow-lg hover:shadow-blue-900/50"
+              >
+                <span>Plan Workout</span>
+              </button>
+
               <button 
                 onClick={() => setCurrentView('weight-training')}
                 className="w-full bg-gradient-to-r from-red-900 to-red-700 hover:from-red-800 hover:to-red-600 text-white font-medium py-4 px-6 rounded-lg transition-all duration-300 shadow-lg hover:shadow-red-900/50"
@@ -285,12 +354,135 @@ function App() {
           </div>
         )}
 
+        {currentView === 'plan-workout' && (
+          <div className="space-y-4">
+            <div className="flex items-center justify-between">
+              <h2 className="text-xl font-semibold">Plan Workout</h2>
+              <button 
+                onClick={() => setCurrentView('home')}
+                className="text-gray-400 hover:text-white"
+              >
+                ✕
+              </button>
+            </div>
+
+            {/* Add Exercise to Plan */}
+            <div className="bg-gray-800 rounded-lg p-4">
+              <h3 className="font-medium mb-4">Add Exercise to Plan</h3>
+              
+              <div className="space-y-3">
+                <select 
+                  className="w-full bg-gray-600 border border-gray-500 rounded p-2 focus:border-blue-400 outline-none text-white"
+                  onChange={(e) => {
+                    if (e.target.value) {
+                      const newExercise = { name: e.target.value, sets: 3 }
+                      setPlannedWorkout([...plannedWorkout, newExercise])
+                      e.target.value = ''
+                    }
+                  }}
+                >
+                  <option value="">Select an exercise to add...</option>
+                  {Object.entries(EXERCISE_GROUPS).map(([group, exercises]) => (
+                    <optgroup key={group} label={group} className="bg-gray-700 font-semibold">
+                      {exercises.map((exercise) => (
+                        <option key={exercise} value={exercise} className="bg-gray-600 pl-4">
+                          {exercise}
+                        </option>
+                      ))}
+                    </optgroup>
+                  ))}
+                </select>
+              </div>
+            </div>
+
+            {/* Planned Exercises */}
+            {plannedWorkout.length > 0 && (
+              <div className="bg-gray-800 rounded-lg p-4">
+                <h3 className="font-medium mb-4">Planned Exercises</h3>
+                
+                <div className="space-y-3">
+                  {plannedWorkout.map((exercise, index) => (
+                    <div key={index} className="flex items-center justify-between bg-gray-700 rounded p-3">
+                      <div>
+                        <div className="font-medium text-blue-300">{exercise.name}</div>
+                        <div className="text-sm text-gray-400">{exercise.sets} sets planned</div>
+                      </div>
+                      <div className="flex items-center space-x-2">
+                        <div className="flex items-center space-x-1">
+                          <button
+                            onClick={() => {
+                              const updated = [...plannedWorkout]
+                              if (updated[index].sets > 1) updated[index].sets--
+                              setPlannedWorkout(updated)
+                            }}
+                            className="w-6 h-6 bg-gray-600 hover:bg-gray-500 rounded text-xs flex items-center justify-center"
+                          >
+                            -
+                          </button>
+                          <span className="w-6 text-center text-sm">{exercise.sets}</span>
+                          <button
+                            onClick={() => {
+                              const updated = [...plannedWorkout]
+                              updated[index].sets++
+                              setPlannedWorkout(updated)
+                            }}
+                            className="w-6 h-6 bg-gray-600 hover:bg-gray-500 rounded text-xs flex items-center justify-center"
+                          >
+                            +
+                          </button>
+                        </div>
+                        <button
+                          onClick={() => {
+                            setPlannedWorkout(plannedWorkout.filter((_, i) => i !== index))
+                          }}
+                          className="text-red-400 hover:text-red-300 text-sm ml-2"
+                        >
+                          Remove
+                        </button>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+
+                <div className="mt-4 space-y-2">
+                  <button 
+                    onClick={startPlannedWorkout}
+                    className="w-full bg-green-600 hover:bg-green-700 text-white font-medium py-3 rounded-lg transition-colors"
+                  >
+                    Start This Workout
+                  </button>
+                  <button 
+                    onClick={() => setPlannedWorkout([])}
+                    className="w-full bg-red-600 hover:bg-red-700 text-white font-medium py-2 rounded-lg transition-colors"
+                  >
+                    Clear Plan
+                  </button>
+                </div>
+              </div>
+            )}
+
+            {plannedWorkout.length === 0 && (
+              <div className="bg-gray-800 rounded-lg p-4 text-center">
+                <p className="text-gray-400">No exercises planned yet. Add exercises above to create your workout plan.</p>
+              </div>
+            )}
+          </div>
+        )}
+
         {currentView === 'weight-training' && (
           <div className="space-y-4">
             <div className="flex items-center justify-between">
-              <h2 className="text-xl font-semibold">Weight Training</h2>
+              <div>
+                <h2 className="text-xl font-semibold">Weight Training</h2>
+                {isWorkoutStarted && (
+                  <p className="text-sm text-blue-300">Following your planned workout</p>
+                )}
+              </div>
               <button 
-                onClick={() => setCurrentView('home')}
+                onClick={() => {
+                  setCurrentView('home')
+                  setIsWorkoutStarted(false)
+                }}
                 className="text-gray-400 hover:text-white"
               >
                 ✕
@@ -433,11 +625,49 @@ function App() {
                       {exercise.sets.map((set, setIndex) => (
                         <div key={setIndex} className="grid grid-cols-3 gap-2 text-sm bg-gray-700 rounded p-2">
                           <div className="text-gray-400">Set {setIndex + 1}</div>
-                          <div>{set.weight} lbs</div>
-                          <div>{set.reps} reps</div>
+                          {set.weight === '' ? (
+                            <input
+                              type="number"
+                              placeholder="Weight"
+                              className="bg-gray-600 border border-gray-500 rounded p-1 text-white text-xs"
+                              onChange={(e) => {
+                                const updated = [...sessionExercises]
+                                updated[exerciseIndex].sets[setIndex].weight = e.target.value
+                                setSessionExercises(updated)
+                              }}
+                            />
+                          ) : (
+                            <div>{set.weight} lbs</div>
+                          )}
+                          {set.reps === '' ? (
+                            <input
+                              type="number"
+                              placeholder="Reps"
+                              className="bg-gray-600 border border-gray-500 rounded p-1 text-white text-xs"
+                              onChange={(e) => {
+                                const updated = [...sessionExercises]
+                                updated[exerciseIndex].sets[setIndex].reps = e.target.value
+                                setSessionExercises(updated)
+                              }}
+                            />
+                          ) : (
+                            <div>{set.reps} reps</div>
+                          )}
                         </div>
                       ))}
                     </div>
+                    
+                    {/* Add more sets button */}
+                    <button
+                      onClick={() => {
+                        const updated = [...sessionExercises]
+                        updated[exerciseIndex].sets.push({ weight: '', reps: '' })
+                        setSessionExercises(updated)
+                      }}
+                      className="mt-2 text-xs bg-blue-600 hover:bg-blue-700 text-white px-3 py-1 rounded transition-colors"
+                    >
+                      Add Set
+                    </button>
                   </div>
                 ))}
 
@@ -654,6 +884,16 @@ function App() {
             >
               <span className="text-lg">🏃</span>
               <span className="text-xs mt-1">Cardio</span>
+            </button>
+            
+            <button 
+              onClick={() => setCurrentView('plan-workout')}
+              className={`flex flex-col items-center py-2 px-4 rounded-lg transition-colors ${
+                currentView === 'plan-workout' ? 'text-red-400' : 'text-white hover:text-red-300'
+              }`}
+            >
+              <span className="text-lg">📋</span>
+              <span className="text-xs mt-1">Plan</span>
             </button>
             
             <button 
