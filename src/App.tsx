@@ -261,13 +261,13 @@ function App() {
 
             {/* Planned Workout Section */}
             {plannedWorkout.length > 0 && (
-              <div className="bg-gradient-to-r from-blue-900/80 to-purple-900/80 backdrop-blur-sm rounded-xl p-6 border border-blue-900/30">
+              <div className="bg-gradient-to-r from-red-900/80 to-red-800/80 backdrop-blur-sm rounded-xl p-6 border border-red-900/30">
                 <h3 className="text-lg font-semibold mb-4 text-white">Today's Planned Workout</h3>
                 <div className="space-y-2">
                   {plannedWorkout.map((exercise, index) => (
                     <div key={index} className="flex justify-between items-center">
-                      <span className="text-blue-200">{exercise.name}</span>
-                      <span className="text-sm text-blue-300">{exercise.sets} sets</span>
+                      <span className="text-red-200">{exercise.name}</span>
+                      <span className="text-sm text-red-300">{exercise.sets} sets</span>
                     </div>
                   ))}
                 </div>
@@ -280,7 +280,7 @@ function App() {
                   </button>
                   <button 
                     onClick={() => setCurrentView('plan-workout')}
-                    className="px-4 bg-blue-600 hover:bg-blue-700 text-white font-medium py-3 rounded-lg transition-colors"
+                    className="px-4 bg-red-600 hover:bg-red-700 text-white font-medium py-3 rounded-lg transition-colors"
                   >
                     Edit Plan
                   </button>
@@ -367,12 +367,12 @@ function App() {
             </div>
 
             {/* Add Exercise to Plan */}
-            <div className="bg-gray-800 rounded-lg p-4">
-              <h3 className="font-medium mb-4">Add Exercise to Plan</h3>
+            <div className="bg-gradient-to-r from-gray-900/80 to-red-900/80 backdrop-blur-sm rounded-xl p-6 border border-red-900/30">
+              <h3 className="font-medium mb-4 text-white">Add Exercise to Plan</h3>
               
               <div className="space-y-3">
                 <select 
-                  className="w-full bg-gray-600 border border-gray-500 rounded p-2 focus:border-blue-400 outline-none text-white"
+                  className="w-full bg-gray-700 border border-red-600 rounded p-2 focus:border-red-400 outline-none text-white"
                   onChange={(e) => {
                     if (e.target.value) {
                       const newExercise = { name: e.target.value, sets: 3 }
@@ -383,9 +383,9 @@ function App() {
                 >
                   <option value="">Select an exercise to add...</option>
                   {Object.entries(EXERCISE_GROUPS).map(([group, exercises]) => (
-                    <optgroup key={group} label={group} className="bg-gray-700 font-semibold">
+                    <optgroup key={group} label={group} className="bg-gray-800 font-semibold">
                       {exercises.map((exercise) => (
-                        <option key={exercise} value={exercise} className="bg-gray-600 pl-4">
+                        <option key={exercise} value={exercise} className="bg-gray-700 pl-4">
                           {exercise}
                         </option>
                       ))}
@@ -397,14 +397,14 @@ function App() {
 
             {/* Planned Exercises */}
             {plannedWorkout.length > 0 && (
-              <div className="bg-gray-800 rounded-lg p-4">
-                <h3 className="font-medium mb-4">Planned Exercises</h3>
+              <div className="bg-gradient-to-r from-gray-900/80 to-red-900/80 backdrop-blur-sm rounded-xl p-6 border border-red-900/30">
+                <h3 className="font-medium mb-4 text-white">Planned Exercises</h3>
                 
                 <div className="space-y-3">
                   {plannedWorkout.map((exercise, index) => (
-                    <div key={index} className="flex items-center justify-between bg-gray-700 rounded p-3">
+                    <div key={index} className="flex items-center justify-between bg-gray-800/70 rounded-lg p-4 border border-red-800/30">
                       <div>
-                        <div className="font-medium text-blue-300">{exercise.name}</div>
+                        <div className="font-medium text-red-300">{exercise.name}</div>
                         <div className="text-sm text-gray-400">{exercise.sets} sets planned</div>
                       </div>
                       <div className="flex items-center space-x-2">
@@ -415,18 +415,18 @@ function App() {
                               if (updated[index].sets > 1) updated[index].sets--
                               setPlannedWorkout(updated)
                             }}
-                            className="w-6 h-6 bg-gray-600 hover:bg-gray-500 rounded text-xs flex items-center justify-center"
+                            className="w-6 h-6 bg-red-700 hover:bg-red-600 rounded text-xs flex items-center justify-center text-white"
                           >
                             -
                           </button>
-                          <span className="w-6 text-center text-sm">{exercise.sets}</span>
+                          <span className="w-6 text-center text-sm text-white">{exercise.sets}</span>
                           <button
                             onClick={() => {
                               const updated = [...plannedWorkout]
                               updated[index].sets++
                               setPlannedWorkout(updated)
                             }}
-                            className="w-6 h-6 bg-gray-600 hover:bg-gray-500 rounded text-xs flex items-center justify-center"
+                            className="w-6 h-6 bg-red-700 hover:bg-red-600 rounded text-xs flex items-center justify-center text-white"
                           >
                             +
                           </button>
@@ -447,13 +447,13 @@ function App() {
                 <div className="mt-4 space-y-2">
                   <button 
                     onClick={startPlannedWorkout}
-                    className="w-full bg-green-600 hover:bg-green-700 text-white font-medium py-3 rounded-lg transition-colors"
+                    className="w-full bg-gradient-to-r from-green-700 to-green-600 hover:from-green-600 hover:to-green-500 text-white font-medium py-3 rounded-lg transition-all duration-300 shadow-lg hover:shadow-green-700/50"
                   >
                     Start This Workout
                   </button>
                   <button 
                     onClick={() => setPlannedWorkout([])}
-                    className="w-full bg-red-600 hover:bg-red-700 text-white font-medium py-2 rounded-lg transition-colors"
+                    className="w-full bg-gradient-to-r from-red-700 to-red-600 hover:from-red-600 hover:to-red-500 text-white font-medium py-2 rounded-lg transition-all duration-300 shadow-lg hover:shadow-red-700/50"
                   >
                     Clear Plan
                   </button>
@@ -462,8 +462,8 @@ function App() {
             )}
 
             {plannedWorkout.length === 0 && (
-              <div className="bg-gray-800 rounded-lg p-4 text-center">
-                <p className="text-gray-400">No exercises planned yet. Add exercises above to create your workout plan.</p>
+              <div className="bg-gradient-to-r from-gray-900/80 to-red-900/80 backdrop-blur-sm rounded-xl p-6 border border-red-900/30 text-center">
+                <p className="text-gray-300">No exercises planned yet. Add exercises above to create your workout plan.</p>
               </div>
             )}
           </div>
@@ -664,7 +664,7 @@ function App() {
                         updated[exerciseIndex].sets.push({ weight: '', reps: '' })
                         setSessionExercises(updated)
                       }}
-                      className="mt-2 text-xs bg-blue-600 hover:bg-blue-700 text-white px-3 py-1 rounded transition-colors"
+                      className="mt-2 text-xs bg-red-600 hover:bg-red-700 text-white px-3 py-1 rounded transition-colors"
                     >
                       Add Set
                     </button>
