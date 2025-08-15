@@ -92,4 +92,8 @@ This project uses modern web technologies for a smooth development experience:
 
 ---
 
-Stay locked in!
+Stay locked in! 💪
+
+## Live Demo
+
+Visit the live app: https://perezjrjaime.github.io/locked-in-workout-tracker/
