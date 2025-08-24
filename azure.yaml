@@ -1,0 +1,10 @@
+# yaml-language-server: $schema=https://raw.githubusercontent.com/Azure/azure-dev/refs/heads/main/schemas/v1.0/azure.yaml.json
+
+name: locked-in-workout-tracker
+infra:
+  provider: bicep
+services:
+  workout-tracker-frontend:
+    project: ./
+    host: staticwebapp
+    language: ts
