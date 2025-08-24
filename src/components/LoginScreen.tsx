@@ -11,7 +11,7 @@ export default function LoginScreen() {
             <img 
               src="/locked-in-logo.png" 
               alt="Locked In" 
-              className="w-56 h-56 mx-auto"
+              className="w-64 h-64 mx-auto"
             />
           </div>
         </div>
