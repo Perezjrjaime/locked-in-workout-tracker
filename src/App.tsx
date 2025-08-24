@@ -1,5 +1,6 @@
 ﻿import './index.css'
 
+// Updated Supabase configuration - trigger deployment
 import { useState, useEffect } from 'react'
 import { Toaster } from 'react-hot-toast'
 import { AuthProvider, useAuth } from './contexts/AuthContext'
