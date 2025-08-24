@@ -68,7 +68,10 @@ export default function History() {
   }
 
   const getWorkoutStats = (workout: any) => {
-    if (!workout.completed_sets) {
+    // Handle both Supabase (completed_sets) and localStorage (exercises) formats
+    const sets = workout.completed_sets || (workout.exercises ? workout.exercises.flatMap((ex: any) => ex.sets || []) : [])
+    
+    if (!sets || sets.length === 0) {
       return {
         totalWeight: '0',
         avgReps: 0,
@@ -77,15 +80,15 @@ export default function History() {
       }
     }
 
-    const totalWeight = workout.completed_sets.reduce((total: number, set: any) => {
+    const totalWeight = sets.reduce((total: number, set: any) => {
       return total + (set.weight * set.reps)
     }, 0)
     
-    const totalReps = workout.completed_sets.reduce((total: number, set: any) => {
+    const totalReps = sets.reduce((total: number, set: any) => {
       return total + set.reps
     }, 0)
 
-    const totalSets = workout.completed_sets.length
+    const totalSets = sets.length
     
     return {
       totalWeight: totalWeight.toLocaleString(),
@@ -96,8 +99,18 @@ export default function History() {
   }
 
   const getExercisesFromSets = (workout: any) => {
+    // Handle both Supabase (completed_sets) and localStorage (exercises) formats
+    if (workout.exercises) {
+      // localStorage format - exercises already grouped
+      return workout.exercises.map((exercise: any) => ({
+        name: exercise.name,
+        sets: exercise.sets || []
+      }))
+    }
+    
     if (!workout.completed_sets) return []
     
+    // Supabase format - need to group by exercise name
     const exerciseMap = new Map()
     
     workout.completed_sets.forEach((set: any) => {

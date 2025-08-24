@@ -1,5 +1,6 @@
 import { createContext, useContext, useState, useEffect, ReactNode } from 'react'
 import { supabase, isSupabaseConfigured, PlannedWorkout, CompletedWorkout, UserWeightLog } from '../lib/supabase'
+import { useAuth } from './AuthContext'
 
 interface Exercise {
   id: string
@@ -36,6 +37,7 @@ interface WorkoutProviderProps {
 }
 
 export function WorkoutProvider({ children }: WorkoutProviderProps) {
+  const { user } = useAuth()
   const [plannedWorkouts, setPlannedWorkouts] = useState<PlannedWorkout[]>([])
   const [completedWorkouts, setCompletedWorkouts] = useState<CompletedWorkout[]>([])
   const [weightLogs, setWeightLogs] = useState<UserWeightLog[]>([])
@@ -112,7 +114,7 @@ export function WorkoutProvider({ children }: WorkoutProviderProps) {
       setLoading(true)
       setError(null)
 
-      if (!supabase || !isConfigured) {
+      if (!supabase || !isConfigured || !user) {
         // Fallback to localStorage
         const newWorkout = {
           id: Date.now().toString(),
@@ -131,10 +133,13 @@ export function WorkoutProvider({ children }: WorkoutProviderProps) {
         return
       }
       
-      // Insert the planned workout
+      // Insert the planned workout with user_id
       const { data: workout, error: workoutError } = await supabase
         .from('planned_workouts')
-        .insert({ name })
+        .insert({ 
+          name,
+          user_id: user.id
+        })
         .select()
         .single()
 
@@ -207,7 +212,7 @@ export function WorkoutProvider({ children }: WorkoutProviderProps) {
       setLoading(true)
       setError(null)
 
-      if (!supabase || !isConfigured) {
+      if (!supabase || !isConfigured || !user) {
         // Fallback to localStorage
         const newCompletedWorkout = {
           id: Date.now().toString(),
@@ -227,14 +232,15 @@ export function WorkoutProvider({ children }: WorkoutProviderProps) {
         return
       }
 
-      // Insert completed workout
+      // Insert completed workout with user_id
       const { data: completedWorkout, error: workoutError } = await supabase
         .from('completed_workouts')
         .insert({
           planned_workout_id: plannedWorkoutId,
           name,
           completed_at: new Date().toISOString(),
-          duration_minutes: durationMinutes
+          duration_minutes: durationMinutes,
+          user_id: user.id
         })
         .select()
         .single()
@@ -344,7 +350,7 @@ export function WorkoutProvider({ children }: WorkoutProviderProps) {
       setLoading(true)
       setError(null)
 
-      if (!supabase || !isConfigured) {
+      if (!supabase || !isConfigured || !user) {
         // Fallback to localStorage
         const newLog = {
           id: Date.now().toString(),
@@ -362,7 +368,8 @@ export function WorkoutProvider({ children }: WorkoutProviderProps) {
         .from('user_weight_logs')
         .insert({
           weight,
-          notes: notes || null
+          notes: notes || null,
+          user_id: user.id
         })
 
       if (error) throw error

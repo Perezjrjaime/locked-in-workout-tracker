@@ -10,7 +10,15 @@ const hasValidCredentials =
   supabaseUrl.includes('supabase.co')
 
 export const supabase = hasValidCredentials 
-  ? createClient(supabaseUrl, supabaseAnonKey)
+  ? createClient(supabaseUrl, supabaseAnonKey, {
+      auth: {
+        persistSession: true,
+        storageKey: 'locked-in-workout-auth',
+        storage: window.localStorage,
+        autoRefreshToken: true,
+        detectSessionInUrl: true
+      }
+    })
   : null
 
 export const isSupabaseConfigured = () => hasValidCredentials
