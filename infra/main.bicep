@@ -47,3 +47,4 @@ module resources 'resources.bicep' = {
 output RESOURCE_GROUP_ID string = resourceGroup.id
 output STATIC_WEB_APP_URL string = resources.outputs.STATIC_WEB_APP_URL
 output STATIC_WEB_APP_NAME string = resources.outputs.STATIC_WEB_APP_NAME
+output STATIC_WEB_APP_API_TOKEN string = resources.outputs.STATIC_WEB_APP_API_TOKEN

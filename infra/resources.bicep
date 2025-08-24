@@ -126,7 +126,7 @@ resource staticWebApp 'Microsoft.Web/staticSites@2023-12-01' = {
     }
   }
   tags: {
-    'azd-service-name': 'workout-tracker-frontend'
+    'azd-service-name': 'locked-in-frontend'
     'azd-env-name': environmentName
   }
 }
@@ -144,5 +144,6 @@ resource staticWebAppSettings 'Microsoft.Web/staticSites/config@2023-12-01' = {
 // Outputs
 output STATIC_WEB_APP_URL string = 'https://${staticWebApp.properties.defaultHostname}'
 output STATIC_WEB_APP_NAME string = staticWebApp.name
+output STATIC_WEB_APP_API_TOKEN string = staticWebApp.listSecrets().properties.apiKey
 output KEY_VAULT_NAME string = keyVault.name
 output MANAGED_IDENTITY_CLIENT_ID string = managedIdentity.properties.clientId

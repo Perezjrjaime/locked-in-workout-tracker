@@ -4,7 +4,7 @@ name: locked-in-workout-tracker
 infra:
   provider: bicep
 services:
-  workout-tracker-frontend:
+  locked-in-frontend:
     project: ./
     host: staticwebapp
     language: ts
