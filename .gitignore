@@ -84,3 +84,6 @@ dist
 # Temporary folders
 tmp/
 temp/
+
+# Backup files
+src/App_backup.tsx
